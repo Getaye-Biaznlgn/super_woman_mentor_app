@@ -6,21 +6,27 @@ import '../services/api_base_helper.dart';
 
 class MessageController with ChangeNotifier {
   ApiBaseHelper apiBaseHelper = ApiBaseHelper();
-  final clientOptions = ably.ClientOptions(
-      key: 'mwUvoA.QGPkKw:y7i6p7k948CC0nUVurkXNP8OdrKu3qBgFlRPHpGhzg8');
+  // final clientOptions = ably.ClientOptions(
+  //     key: 'mwUvoA.QGPkKw:y7i6p7k948CC0nUVurkXNP8OdrKu3qBgFlRPHpGhzg8');
+    ably.Realtime realtime = ably.Realtime(options: ably.ClientOptions(
+      key: 'mwUvoA.QGPkKw:y7i6p7k948CC0nUVurkXNP8OdrKu3qBgFlRPHpGhzg8'));
 
   String? _message;
   List<Message> messages = [];
 
   bindAbly(id) {
-    ably.Realtime realtime = ably.Realtime(options: clientOptions);
-    realtime.connection
-        .on()
-        .listen((ably.ConnectionStateChange stateChange) async {
+    // ably.Realtime realtime = ably.Realtime(options: clientOptions);
+    // realtime.connection
+    //     .on()
+    //     .listen((ably.ConnectionStateChange stateChange) async {
       ably.RealtimeChannel channel =
           realtime.channels.get('private:get_user_message.$id');
 
-      channel.subscribe(name: 'newMessage').listen((ably.Message message) {
+   var subscribe= channel.subscribe(name : 'newMessage');
+   
+      subscribe.listen((ably.Message message) {
+         print('ably message😂');
+       print(message);
         final data = jsonEncode(message.data);
         final response = jsonDecode(data)['message'] as Map<String, dynamic>;
         messages.insert(
@@ -35,7 +41,7 @@ class MessageController with ChangeNotifier {
                 createdAt: DateTime.parse(response['created_at'])));
         notifyListeners();
       });
-    });
+    // });
   }
 
   Future fetchMessages(token, menteeId) async {

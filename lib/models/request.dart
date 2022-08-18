@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import '../services/api_base_helper.dart';
 
-class MenteeRequest with ChangeNotifier{
+class MenteeRequest with ChangeNotifier {
   int id;
   String firstName;
   String lastName;
@@ -13,7 +14,7 @@ class MenteeRequest with ChangeNotifier{
     required this.id,
     required this.firstName,
     required this.lastName,
-     this.profilePic,
+    this.profilePic,
     required this.educationLevel,
     required this.state,
     required this.requestMessage,
@@ -31,5 +32,31 @@ class MenteeRequest with ChangeNotifier{
     );
   }
 
+  Future acceptRequest(requestId, token) async {
+    ApiBaseHelper apiBaseHelper = ApiBaseHelper();
+    try {
+      state = 'accepted';
+      // notifyListeners();
+      var res = await apiBaseHelper.post(
+          url: '/mentor/accept_request/$requestId',
+          payload: null,
+          token: token);
+      state = 'accepted';
+      print('😂 requested accepte');
+      print(res);
+      notifyListeners();
+    } catch (e) {}
+  }
 
+  Future rejectRequestRequest(requestId, token) async {
+    ApiBaseHelper apiBaseHelper = ApiBaseHelper();
+    try {} catch (e) {
+      var res = await apiBaseHelper.post(
+          url: '/mentor/reject_request/$requestId',
+          payload: null,
+          token: token);
+      state = 'rejected';
+      notifyListeners();
+    }
+  }
 }

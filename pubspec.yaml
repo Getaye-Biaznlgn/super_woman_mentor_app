@@ -42,7 +42,8 @@ dependencies:
   flutter_switch:
   http: ^0.13.4
   ably_flutter: ^1.2.15
-
+  image_picker: ^0.8.5+3
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

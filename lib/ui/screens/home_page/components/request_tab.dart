@@ -22,13 +22,14 @@ class _RequestTabState extends State<RequestTab> {
     await Provider.of<RequestController>(context, listen: false)
         .fetchMenteeRequest(token);
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 
   @override
   void initState() {
     super.initState();
+    fetchMenteeRequest();
   }
 
   @override
@@ -36,7 +37,7 @@ class _RequestTabState extends State<RequestTab> {
     // Auth auth = Provider.of<Auth>(context);
     List<MenteeRequest> requests =
         Provider.of<RequestController>(context).requests;
-    return isLoading
+    return !isLoading
         ? ListView.builder(
             itemCount: requests.length,
             itemBuilder: (context, index) => ChangeNotifierProvider.value(
@@ -71,86 +72,92 @@ class _RequestTabState extends State<RequestTab> {
 }
 
 class RequestListItem extends StatelessWidget {
-  // String name;
-  // String educationLevel;
-  // String? ppic;
-  // String state;
-  // VoidCallback onPress;
-  RequestListItem(
-      {
-      //   required this.name,
-      // required this.educationLevel,
-      // this.ppic,
-      // required this.state,
-      // required this.onPress,
-      Key? key})
-      : super(key: key);
+  RequestListItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Consumer<MenteeRequest>(builder: (context, menteeRequest, __) {
-      return Column(
-        children: [
-          ListTile(
-            isThreeLine: true,
-            contentPadding: const EdgeInsets.only(bottom: 0),
-            leading: menteeRequest.profilePic == null
-                ? CircleAvatar(
-                    backgroundColor: kPrimaryColor,
-                    child: Text(
-                      menteeRequest.firstName.substring(0, 1).toUpperCase(),
-                      style: const TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          children: [
+            ListTile(
+              visualDensity: VisualDensity(horizontal: 0, vertical: -2),
+              leading: menteeRequest.profilePic == null
+                  ? CircleAvatar(
+                    radius: 30,
+                      backgroundColor: kPrimaryColor,
+                      child: Text(
+                        menteeRequest.firstName.substring(0, 1).toUpperCase(),
+                        style: const TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : CircleAvatar(
+                    radius: 30,
+                      backgroundImage: NetworkImage(menteeRequest.profilePic!),
                     ),
-                  )
-                : CircleAvatar(
-                    backgroundImage: NetworkImage(menteeRequest.firstName),
-                  ),
-            title: Text(
-              '${menteeRequest.firstName} ${menteeRequest.lastName}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(menteeRequest.educationLevel),
-            trailing: Text(
-              menteeRequest.state,
-              style: TextStyle(
-                  color: menteeRequest.state == 'accepted'
-                      ? Colors.green
-                      : menteeRequest.state == 'rejected'
-                          ? kPrimaryColor
-                          : Colors.orangeAccent),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                width: width * 0.4,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Review',
-                      style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(primary: kSecondaryColor),
-                ),
+              title: Text(
+                '${menteeRequest.firstName} ${menteeRequest.lastName}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                width: width * 0.4,
-                child: ElevatedButton(
-                  onPressed: menteeRequest.state == 'rejected' ? null : () {},
-                  child: const Text(
-                    'Accept',
-                    style: TextStyle(color: Colors.white),
+              subtitle: Text(menteeRequest.educationLevel),
+              trailing: Text(
+                menteeRequest.state,
+                style: TextStyle(
+                    color: menteeRequest.state ==
+                            requestStatus['accepted'].toString()
+                        ? Colors.green
+                        : menteeRequest.state ==
+                                requestStatus['rejected'].toString()
+                            ? kPrimaryColor
+                            : Colors.orangeAccent),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: width * 0.4,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Review',
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(primary: kSecondaryColor),
                   ),
-                  style: ElevatedButton.styleFrom(primary: kPrimaryColor),
                 ),
-              )
-            ],
-          ),
-          const Divider()
-        ],
+                SizedBox(
+                  width: width * 0.4,
+                  child: ElevatedButton(
+                    onPressed: menteeRequest.state ==
+                            requestStatus['open'].toString()
+                        ? () {
+                            menteeRequest.acceptRequest(menteeRequest.id, Provider.of<Auth>(context, listen: false).token);
+                          }
+                        : null,
+                    child: Text(
+                      'Accept',
+                      style: TextStyle(
+                          color: menteeRequest.state ==
+                                  requestStatus['open'].toString()
+                              ? Colors.white
+                              : Colors.black),
+                    ),
+                    style: ElevatedButton.styleFrom(primary: kPrimaryColor),
+                  ),
+                )
+              ],
+            ),
+            const Divider(
+              color: Colors.grey,
+              height: 5,
+              thickness: 2,
+            )
+          ],
+        ),
       );
     });
   }

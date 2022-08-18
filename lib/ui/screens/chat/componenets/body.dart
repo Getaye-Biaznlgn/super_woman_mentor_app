@@ -18,6 +18,11 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
+    MessageController msgCtrl =
+        Provider.of<MessageController>(context, listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
+       msgCtrl.bindAbly(auth.id);
+
     Future.delayed(Duration.zero).then((value) => getMessage());
   }
 
@@ -32,7 +37,6 @@ class _BodyState extends State<Body> {
     await msgCtrl.fetchMessages(auth.token, args['id']);
 
     isLoading = false;
-    msgCtrl.bindAbly(auth.id);
   }
 
   @override

@@ -154,6 +154,7 @@ class _SignInFormState extends State<SignInForm> {
             Row(
               children: [
                 Checkbox(
+                  
                   checkColor: Colors.white,
                   fillColor: MaterialStateProperty.resolveWith(getColor),
                   value: isChecked,
@@ -197,7 +198,7 @@ class _SignInFormState extends State<SignInForm> {
                   ],
                 ),
                 press: _formSubmit),
-            Text(_errorText),
+            Text(_errorText, style: const TextStyle(color: kPrimaryColor),),
           ],
         ),
       ),

@@ -46,8 +46,9 @@ class ChatTab extends StatelessWidget {
                       name: chatMentees[index].firstName +
                           ' ' +
                           chatMentees[index].lastName,
-                      lastMessage: chatMentees[index].lastMessage,
+                      lastMessage: chatMentees[index].lastMessage??'',
                       ppic: chatMentees[index].profilePic,
+                      noUnreadMessasge:chatMentees[index].unreadMessage ,
                       onPress: () {
                         Navigator.pushNamed(context, ChatScreen.routeName,
                             arguments:{
@@ -75,11 +76,13 @@ class ChatMenteeListItem extends StatelessWidget {
   String name;
   String lastMessage;
   String? ppic;
+  int noUnreadMessasge;
   final VoidCallback onPress;
   ChatMenteeListItem({
     required this.name,
     required this.lastMessage,
     required this.onPress,
+    required this.noUnreadMessasge,
     this.ppic,
     Key? key,
   }) : super(key: key);
@@ -112,6 +115,15 @@ class ChatMenteeListItem extends StatelessWidget {
           ? lastMessage
           : lastMessage.substring(0, 30) + '...'),
       onTap: onPress,
+      trailing: noUnreadMessasge>0?Container(
+        
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(2)
+        ),
+        padding: const EdgeInsets.all(8.0),
+        child: Text(noUnreadMessasge.toString()),): null,
     );
+
   }
 }

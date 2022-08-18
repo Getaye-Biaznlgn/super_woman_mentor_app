@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:super_woman_mentor/models/experience.dart';
 import '../services/api_base_helper.dart';
 import '../services/storage_manager.dart';
 
@@ -14,6 +15,8 @@ class Auth with ChangeNotifier {
   int? _id;
   String? _dob;
   String? _profilePicture;
+  int? _noOfMentee;
+  Experience? experience;
   // page loading controller
   // bool _isLoading = false;
 
@@ -25,7 +28,6 @@ class Auth with ChangeNotifier {
     _phoneNumber = json['mentor']['phone_number'];
     _profilePicture = json['mentor']['profile_picture'];
     notifyListeners();
-    print('😂😂😂');
   }
 
   _fromJsonUserData(Map<String, dynamic> json) {
@@ -36,9 +38,17 @@ class Auth with ChangeNotifier {
     _profilePicture = json['profile_picture'];
     _bio = json['bio'];
     _dob = json['date_of_birth'];
+    _noOfMentee = json['no_of_mentee'];
+    if(json['experiance']!=null){
+       experience = Experience(
+        id: json['experiance']['id'],
+        position: json['experiance']['position'],
+        org: json['experiance']['organization'],
+        from: DateTime.parse(json['experiance']['from']) ,
+        to: DateTime.parse( json['experiance']['to']));
+    }
+   
     notifyListeners();
-
-    print(json);
   }
 
   //
@@ -46,7 +56,7 @@ class Auth with ChangeNotifier {
     return _token != null;
   }
 
-  Future logout(token) async {
+  Future logout() async {
     await apiBaseHelper.post(url: '/api/logout', token: token, payload: null);
     _token = null;
     StorageManager.deleteData('authToken');
@@ -57,26 +67,29 @@ class Auth with ChangeNotifier {
     Map<String, dynamic> data = {'phone_number': phoneNo, 'password': password};
     var signInResponse =
         await apiBaseHelper.post(url: '/mentor/login', payload: data);
-     print(signInResponse);
+    print(signInResponse);
     if (signInResponse != null) {
       _fromJson(signInResponse);
       StorageManager.saveData('authToken', _token);
     }
   }
 
-  Future verifyOtp({required phoneNo, required otp}) async {
-    Map<String, dynamic> userInfo = {'phone_number': phoneNo, 'otp': otp};
+  Future verifyOtp({required phoneNo, required otp,}) async {
+    Map<String, dynamic> userInfo = {'phone_number': phoneNo, 'code': otp};
     var verifyOtpResponse =
-        await apiBaseHelper.post(url: '/user/verify_phone', payload: userInfo);
-    print(verifyOtpResponse);
+        await apiBaseHelper.post(url: '/mentor/verify_phone', payload: userInfo);
+
     if (verifyOtpResponse != null) {
       _fromJson(verifyOtpResponse);
+      notifyListeners();
       StorageManager.saveData('authToken', _token);
     }
   }
 
   Future getUserInfo({required token}) async {
     var userData = await apiBaseHelper.get(url: '/mentor/mentor', token: token);
+    print('alex🤣 user/user');
+    print(userData);
     if (userData != null) {
       _fromJsonUserData(userData);
     }
@@ -100,29 +113,37 @@ class Auth with ChangeNotifier {
     return true;
   }
 
-  Future editProfile(
+  Future updateProfileName(
       {required firstName,
       required lastName,
-      required dob,
-      required eduLevelId,
-      required bio,
-      required token}) async {
+     }) async {
     Map<String, dynamic> userInfo = {
-      'first_name': lastName,
-      'last_name': firstName,
-      'bio': bio,
-      'date_of_birth': dob.toString(),
-      'education_level_id': eduLevelId,
+      'first_name': firstName,
+      'last_name': lastName,
     };
-    // print('😁😀 before update profile');
     var editResponse = await apiBaseHelper.post(
-        url: '/user/update_profile', payload: userInfo, token: token);
-    // print(editResponse);
+        url: '/mentor/update_profile', payload: userInfo, token: token);
     if (editResponse != null) {
-      _fromJsonUserData(editResponse);
+      _firstName = editResponse['first_name'];
+      _lastName = editResponse['last_name'];
+      notifyListeners();
     }
   }
 
+ Future changePhoneNo(
+      {required phoneNo,
+      required code
+     }) async {
+   
+    await apiBaseHelper.post(
+        url: '/mentor/change_phone', payload: {'new_phone_number':code+phoneNo}, token: token);
+   
+  }
+// 
+set profilePicture(path){
+  _profilePicture=path;
+  notifyListeners();
+}
   get token {
     return _token;
   }
@@ -153,5 +174,9 @@ class Auth with ChangeNotifier {
 
   get id {
     return _id;
+  }
+
+  get noOfMentee {
+    return _noOfMentee;
   }
 }

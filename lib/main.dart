@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:super_woman_mentor/controller/availability_controller.dart';
 import 'package:super_woman_mentor/providers/message_provider.dart';
 import 'package:super_woman_mentor/ui/screens/sign_in/sign_in.dart';
 import 'controller/request_controller.dart';
@@ -17,7 +18,8 @@ void main() {
       ChangeNotifierProvider<Auth>(create: (_) => Auth()),
       ChangeNotifierProvider<MessageController>(
           create: (_) => MessageController()),
-      ChangeNotifierProvider<RequestController>(create: (_)=>RequestController(),)    
+      ChangeNotifierProvider<RequestController>(create: (_)=>RequestController(),) ,
+      ChangeNotifierProvider<AvailabilityController>(create: (_)=>AvailabilityController(),)    
     ],
     child: const MyApp(),
   ));

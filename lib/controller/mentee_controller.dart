@@ -1,6 +1,5 @@
 import 'package:super_woman_mentor/models/chat_mentee.dart';
 
-import '../models/mentee.dart';
 import '../services/api_base_helper.dart';
 
 class MenteeController {
@@ -20,15 +19,12 @@ class MenteeController {
     List<ChatMentee> menteeChats = [];
     final response =
         await apiBaseHelper.get(url: '/mentor/chat_mentees', token: token);
-    print('😎 chat mentee');
-    print(response);
+        print('😂 chat mentee');
     List menteeResponse = response as List;
     for (int i = 0; i < menteeResponse.length; i++) {
       Map<String, dynamic> map = menteeResponse[i];
       menteeChats.add(ChatMentee.fromJson(map));
     }
-    print('😜');
-    print(response);
     return menteeChats;
   }
 

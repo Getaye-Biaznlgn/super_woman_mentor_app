@@ -8,3 +8,10 @@ const double kDefaultPadding = 20.0;
 //for temporary rep
 const double kBodyMediumTextSize = 20;
 const double kBodyLargeTextSize = 24;
+
+const Map<String, String> requestStatus ={
+ 'accepted':'accepted',
+ 'rejected':'rejected',
+ 'open' :'open'
+};
+// const  RequestStatus {accepted, rejected, open}

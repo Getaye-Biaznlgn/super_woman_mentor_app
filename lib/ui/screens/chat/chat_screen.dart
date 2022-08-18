@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:super_woman_mentor/ui/screens/chat/componenets/body.dart';
-
 import '../../../utils/constants.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -22,7 +21,6 @@ class ChatScreen extends StatelessWidget {
     return AppBar(
       titleSpacing: 0,
       title: ListTile(
-        // isThreeLine: true,
         leading: args['ppic'] == null
             ? CircleAvatar(
                 backgroundColor: kPrimaryColor,

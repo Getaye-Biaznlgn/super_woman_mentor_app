@@ -6,7 +6,7 @@ import 'api_exception.dart';
 class ApiBaseHelper {
   //'http://192.168.0.4:8000'
   // "https://admin.super-women.merahitechnologies.com"
-  final String _baseUrl = "http://192.168.0.4:8000";
+  final String _baseUrl = "https://admin.super-women.merahitechnologies.com";
   Future<dynamic> get({required String url, token}) async {
     final responseJson;
     try {
@@ -20,7 +20,22 @@ class ApiBaseHelper {
     } on SocketException {
       throw FetchDataException(message: 'No Internet connection');
     }
-    // print('api get recieved!');
+    return responseJson;
+  }
+
+ Future<dynamic> delete({required String url, token}) async {
+    final responseJson;
+    try {
+      final http.Response response = await http.delete(Uri.parse(_baseUrl + url),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token'
+          });
+      responseJson = _returnResponse(response);
+    } on SocketException {
+      throw FetchDataException(message: 'No Internet connection');
+    }
     return responseJson;
   }
 
@@ -38,7 +53,6 @@ class ApiBaseHelper {
     } on SocketException {
       throw FetchDataException(message: 'No Internet connection');
     }
-    print('api get recieved');
     return responseJson;
   }
 
